@@ -1,31 +1,33 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-      "experimentalDecorators": true,
-      "noImplicitAny": true,
-      "target": "ES2022",
-      "module": "ESNext",
-      "declaration": true,
-      "declarationMap": true,
-      "outDir": "lib",
-      "removeComments": false,
-      "strict": true,
-      "inlineSourceMap": true,
-      "moduleResolution": "node",
-      "resolveJsonModule": true,
-      "pretty": true,
-      "baseUrl": "src/",
-      "rootDirs": [ "src/" ],
-      "esModuleInterop": true
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "lib",
+    "removeComments": false,
+    "strict": true,
+    "inlineSourceMap": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "pretty": true,
+    "baseUrl": "src/",
+    "rootDirs": [ "src/" ],
+    "esModuleInterop": true,
+    "typeRoots": [ "node_modules/@types", "tests/types" ]
   },
   "include": [ "src/**/*" ],
   "exclude": [ "./node_modules"],
   "watchOptions": {
-      "watchFile": "useFsEvents",
-      "watchDirectory": "useFsEvents",
-      "fallbackPolling": "dynamicPriority"
+    "watchFile": "useFsEvents",
+    "watchDirectory": "useFsEvents",
+    "fallbackPolling": "dynamicPriority"
   },
   "lib": [ "ES2022" ],
   "types": [
-      "node"
+    "node"
   ]
 }

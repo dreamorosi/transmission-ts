@@ -13,5 +13,6 @@ export default defineConfig({
       functions: 100,
       lines: 100,
     },
+    setupFiles: './tests/helpers/customMatchers.ts',
   },
 });

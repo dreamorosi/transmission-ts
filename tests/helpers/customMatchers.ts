@@ -1,40 +1,51 @@
-// setupTests.js
-const catchError = (callback) => {
-  try {
-    callback();
-  } catch (error) {
-    return error;
-  }
-};
+import { expect } from 'vitest';
 
-/**
- * @type {ExpectExtendMap & MatchersExtend<any>}
- */
-const customMatchers = {
-  toThrowWithCause(received, cause) {
-    const err = catchError(received);
-    const passes = err instanceof Error && err.cause === cause;
-    const actualCause = String(
-      err ? `got: ${err.cause}` : 'no error was thrown'
-    );
-    console.log('Error Cause', actualCause);
+expect.extend({
+  /**
+   * Custom matcher to check if an error has a given cause
+   *
+   * @param received Error to match against
+   * @param expected Cause to match against, either a `string` or an `Error`
+   */
+  toThrowErrorWithCause(received, expected) {
+    const { isNot } = this;
+    const messageSuffix = `Expected to${
+      isNot ? ' not' : ''
+    } receive an Error with cause '${expected}',`;
 
-    if (err && err.cause === undefined) {
-      console.error('Error was thrown, but cause was undefined. Error:', err);
+    let pass = false;
+    // If the received value is not an error, we can't check the cause
+    if (!(received instanceof Error)) {
+      return {
+        pass,
+        message: () => `${messageSuffix} but got none`,
+        expected: 'an error',
+        actual: typeof received,
+      };
     }
+    const cause = Object(received).hasOwnProperty('cause')
+      ? received['cause']
+      : undefined;
+    // If the error has no cause, we can't check it
+    if (cause === undefined) {
+      return {
+        pass,
+        message: () => `${messageSuffix} but got an error without a cause`,
+      };
+    }
+    // If the cause is an error, we check the message, otherwise we check the string
+    if (cause instanceof Error) {
+      pass = cause.message === expected;
+    } else if (typeof cause === 'string') {
+      pass = cause === expected;
+    }
+    const actualCause = cause instanceof Error ? cause.message : cause;
 
-    return passes
-      ? {
-          pass: true, // not.toThrowWithCause
-          message: () =>
-            `Expected callback not to throw an Error with cause '${cause}'`,
-        }
-      : {
-          pass: false, // .toThrowWithCause
-          message: () =>
-            `Expected callback to throw an Error with cause '${cause}', but ${actualCause}`,
-        };
+    return {
+      pass,
+      message: () => `${messageSuffix} but got ${actualCause}`,
+      expected,
+      actual: actualCause,
+    };
   },
-};
-
-expect.extend(customMatchers);
+});
