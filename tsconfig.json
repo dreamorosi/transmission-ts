@@ -16,10 +16,9 @@
     "pretty": true,
     "baseUrl": "src/",
     "rootDirs": [ "src/" ],
-    "esModuleInterop": true,
-    "typeRoots": [ "node_modules/@types", "tests/types" ]
+    "esModuleInterop": true
   },
-  "include": [ "src/**/*" ],
+  "include": [ "src/**/*", "tests/**/*" ],
   "exclude": [ "./node_modules"],
   "watchOptions": {
     "watchFile": "useFsEvents",
