@@ -1,5 +1,12 @@
+import { vi } from 'vitest';
 import type { MockInterceptor } from 'undici/types/mock-interceptor';
-import type { PingResponse } from '../../src/types';
+import type {
+  PingResponse,
+  RequestServiceConfig,
+  SessionServiceConfig,
+} from '../../src/types';
+import { SessionService } from '../../src/SessionService';
+import { RequestService } from '../../src/RequestService';
 
 /**
  * Get the base auth header
@@ -110,4 +117,46 @@ const getPingResponse = (): PingResponse => ({
   result: 'no method name',
 });
 
-export { getBaseAuthHeader, getRequestMatcher, getPingResponse };
+/**
+ * Class to mock the session service
+ */
+class SessionDummy extends SessionService {
+  public getSessionId = vi.fn().mockResolvedValue('123');
+  public resetSessionId = vi.fn();
+}
+
+/**
+ * Get a dummy session service
+ * @returns A dummy session service
+ */
+const getDummySessionService = (config?: SessionServiceConfig): SessionDummy =>
+  new SessionDummy(
+    config || {
+      pathname: '',
+      authorization: '',
+    }
+  );
+
+/**
+ * Get a dummy request service, optionally by passing a session service
+ * @param sessionService An optional session service to use
+ * @returns A dummy request service
+ */
+const getDummyRequestService = (
+  sessionService?: SessionDummy | null,
+  invalidSessionRetryConfig?: RequestServiceConfig['invalidSessionRetryConfig']
+): RequestService =>
+  new RequestService({
+    customServices: {
+      sessionService: sessionService || getDummySessionService(),
+    },
+    invalidSessionRetryConfig,
+  });
+
+export {
+  getBaseAuthHeader,
+  getRequestMatcher,
+  getPingResponse,
+  getDummySessionService,
+  getDummyRequestService,
+};

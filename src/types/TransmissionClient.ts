@@ -1,6 +1,13 @@
 import { z } from 'zod';
-import { Session as SessionSchema } from '../schemas/Session';
-import { Base, PingResponse } from 'schemas';
+import {
+  Base,
+  PingResponse,
+  Session as SessionSchema,
+  Torrent,
+  Torrent as TorrentSchema,
+} from 'schemas';
+import type { SessionService } from './SessionService';
+import type { RequestService } from './RequestService';
 
 /**
  * The configuration options for the TransmissionClient
@@ -36,6 +43,24 @@ type TransmissionClientConfig = {
    * @default 'transmission'
    */
   password?: string;
+  /**
+   * Options for customizing the services used by the TransmissionClient.
+   * This is useful for testing as it allows you to mock the services.
+   */
+  customServices?: {
+    /**
+     * The session service which is used to obtain a session ID from the
+     * Transmission RPC endpoint
+     * @default new SessionService()
+     */
+    sessionService?: SessionService;
+    /**
+     * The request service which is used to make requests to the
+     * Transmission RPC endpoint
+     * @default new RequestService()
+     */
+    requestService?: RequestService;
+  };
 };
 
 /**
@@ -59,11 +84,11 @@ type InvalidSessionRetry = {
 /**
  * The options to use when parsing a response
  */
-type ParseResponseOptions<GenericSchema> = {
+type ParseResponseOptions<GenericSchema extends z.ZodType> = {
   /**
    * The zod schema to use to parse the response
    */
-  schema: z.ZodSchema<GenericSchema>;
+  schema: GenericSchema;
   /**
    * The response to parse
    */
@@ -81,8 +106,14 @@ type Session = z.infer<typeof SessionSchema>;
 
 type PingResponse = z.infer<typeof PingResponse>;
 
+type Torrent = z.infer<typeof TorrentSchema>;
+
+type TorrentId = number | number[] | string | string[] | 'recently-active';
+
 interface TransmissionClient {
   getSession: () => Promise<Session>;
+  listTorrents: (ids?: TorrentId) => Promise<Torrent[]>;
+  ping: () => Promise<void>;
 }
 
 export {
@@ -92,6 +123,7 @@ export {
   ParseResponseOptions,
   ParseResponseOutput,
   BaseResponse,
-  Session,
   PingResponse,
+  Session,
+  Torrent,
 };
