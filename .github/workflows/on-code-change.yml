@@ -1,0 +1,17 @@
+name: On code change
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'src/**'
+      - 'tests/**'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/**'
+
+jobs:
+  run-unit-tests:
+    uses: ./.github/workflows/reusable-run-linting-and-unit-tests.yml
