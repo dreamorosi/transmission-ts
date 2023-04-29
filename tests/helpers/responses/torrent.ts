@@ -112,4 +112,29 @@ const torrentList = {
   result: 'success',
 };
 
-export { torrentList };
+const torrentListWithFields = {
+  arguments: {
+    torrents: [
+      {
+        id: 19,
+        name: 'Some Dummy Torrent',
+      },
+    ],
+  },
+  result: 'success',
+};
+
+const recentlyActiveTorrentList = {
+  arguments: {
+    removed: [1, 2],
+    torrents: [
+      {
+        id: 19,
+        name: 'Some Dummy Torrent',
+      },
+    ],
+  },
+  result: 'success',
+};
+
+export { torrentList, torrentListWithFields, recentlyActiveTorrentList };

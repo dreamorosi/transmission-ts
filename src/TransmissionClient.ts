@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { PingResponse, SessionResponse, TorrentResponse } from './schemas';
-import { fields } from './helpers';
+import { AllTorrentFields } from './helpers';
 import { RequestService } from './RequestService';
 import type {
   TransmissionClient as ITransmissionClient,
@@ -8,8 +8,10 @@ import type {
   ParseResponseOptions,
   Session,
   ParseResponseOutput,
-  Torrent,
   RequestService as IRequestService,
+  ListTorrentsConfig,
+  TorrentId,
+  ListTorrentsOutput,
 } from './types';
 
 class TransmissionClient implements ITransmissionClient {
@@ -58,13 +60,16 @@ class TransmissionClient implements ITransmissionClient {
    * Gets a list of all torrents from the Transmission RPC endpoint
    * @returns A list of all torrents
    */
-  public async listTorrents(): Promise<Torrent[]> {
+  public async listTorrents<Ids extends TorrentId>(
+    config?: ListTorrentsConfig<Ids>
+  ): Promise<ListTorrentsOutput<Ids>> {
     try {
       const response = await this.#requestService.request(
         JSON.stringify({
           method: 'torrent-get',
           arguments: {
-            fields,
+            ...(config?.ids && { ids: config.ids }),
+            fields: config?.fields || AllTorrentFields,
           },
         })
       );
@@ -74,7 +79,11 @@ class TransmissionClient implements ITransmissionClient {
         response,
       });
 
-      return data.torrents;
+      if (config?.ids === 'recently-active') {
+        return data as ListTorrentsOutput<Ids>;
+      } else {
+        return data.torrents as ListTorrentsOutput<Ids>;
+      }
     } catch (err) {
       throw new Error('Unable to get torrents from Transmission RPC endpoint', {
         cause: err,

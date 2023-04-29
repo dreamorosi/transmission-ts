@@ -5,7 +5,8 @@ import {
   Session as SessionSchema,
   Torrent,
   Torrent as TorrentSchema,
-} from 'schemas';
+} from '../schemas';
+import { TorrentField } from '../helpers';
 import type { SessionService } from './SessionService';
 import type { RequestService } from './RequestService';
 
@@ -81,6 +82,22 @@ type InvalidSessionRetry = {
   maxRetries: number;
 };
 
+type TorrentId = number | number[] | string | string[] | 'recently-active';
+
+type ListTorrentsConfig<Ids> = {
+  ids?: TorrentId & Ids;
+  fields?: (keyof typeof TorrentField)[];
+};
+
+type ListTorrentsRecentlyActiveOutput = {
+  removed: number[];
+  torrents: Torrent[];
+};
+
+type ListTorrentsOutput<Ids extends TorrentId> = Ids extends 'recently-active'
+  ? ListTorrentsRecentlyActiveOutput
+  : Torrent[];
+
 /**
  * The options to use when parsing a response
  */
@@ -108,11 +125,11 @@ type PingResponse = z.infer<typeof PingResponse>;
 
 type Torrent = z.infer<typeof TorrentSchema>;
 
-type TorrentId = number | number[] | string | string[] | 'recently-active';
-
 interface TransmissionClient {
   getSession: () => Promise<Session>;
-  listTorrents: (ids?: TorrentId) => Promise<Torrent[]>;
+  listTorrents: <Ids extends TorrentId>(
+    config?: ListTorrentsConfig<Ids>
+  ) => Promise<Torrent[]>;
   ping: () => Promise<void>;
 }
 
@@ -126,4 +143,8 @@ export {
   PingResponse,
   Session,
   Torrent,
+  ListTorrentsConfig,
+  ListTorrentsRecentlyActiveOutput,
+  ListTorrentsOutput,
+  TorrentId,
 };

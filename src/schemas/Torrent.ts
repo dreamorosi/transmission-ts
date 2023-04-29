@@ -11,10 +11,6 @@ import { Status } from '../helpers';
 const getStatus = (
   statusCode: keyof typeof Status | number | undefined
 ): (typeof Status)[keyof typeof Status] | undefined => {
-  if (statusCode === undefined) {
-    return undefined;
-  }
-
   const key = statusCode as keyof typeof Status;
 
   return Status[key];
@@ -58,7 +54,7 @@ const Torrent = z.object({
   haveUnchecked: z.number().optional(),
   haveValid: z.number().optional(),
   honorsSessionLimits: z.boolean().optional(),
-  id: z.number().optional(),
+  id: z.number(),
   isFinished: z.boolean().optional(),
   isPrivate: z.boolean().optional(),
   isStalled: z.boolean().optional(),

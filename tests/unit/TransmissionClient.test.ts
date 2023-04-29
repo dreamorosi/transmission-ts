@@ -1,8 +1,13 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { TransmissionClient } from '../../src/TransmissionClient';
+import { AllTorrentFields } from '../../src/helpers';
 import { getDummyRequestService, getPingResponse } from '../helpers';
 import { successSession } from '../helpers/responses';
-import { torrentList } from '../helpers/responses/torrent';
+import {
+  recentlyActiveTorrentList,
+  torrentList,
+  torrentListWithFields,
+} from '../helpers/responses/torrent';
 
 afterEach(async () => {
   vi.resetAllMocks();
@@ -133,7 +138,7 @@ describe('Class: TransmissionClient', () => {
     });
   });
   describe('Method: listTorrents', () => {
-    it('returns all the torrents when the request is successful', async () => {
+    it('requests all fields and applies no filters by default and returns all the torrents', async () => {
       // Prepare
       const requestService = getDummyRequestService();
       vi.spyOn(requestService, 'request').mockResolvedValue(torrentList);
@@ -147,25 +152,113 @@ describe('Class: TransmissionClient', () => {
       const res = await transmissionClient.listTorrents();
 
       // Assert
-      expect(res).toStrictEqual(torrentList.arguments.torrents);
+      expect(res).toStrictEqual(
+        torrentList.arguments.torrents.map((t) => ({
+          ...t,
+          status: 'DOWNLOADING',
+        }))
+      );
       expect(requestService.request).toHaveBeenCalledWith(
         JSON.stringify({
           method: 'torrent-get',
+          arguments: {
+            fields: AllTorrentFields,
+          },
         })
       );
     });
-    it('throws an error when the request is unsuccessful', async () => {
+    it('requests only the provided fields and applies no filters and returns all the torrents', async () => {
       // Prepare
       const requestService = getDummyRequestService();
-      vi.spyOn(requestService, 'request').mockResolvedValue({
-        arguments: {},
-        result: 'failure',
-      });
+      vi.spyOn(requestService, 'request').mockResolvedValue(
+        torrentListWithFields
+      );
       const transmissionClient = new TransmissionClient({
         customServices: {
           requestService,
         },
       });
+
+      // Act
+      const res = await transmissionClient.listTorrents({
+        fields: ['id', 'name'],
+      });
+
+      // Assert
+      expect(res).toStrictEqual(torrentListWithFields.arguments.torrents);
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-get',
+          arguments: {
+            fields: ['id', 'name'],
+          },
+        })
+      );
+    });
+    it('requests all fields and applies the provided filters and returns the matching torrents', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(torrentList);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      const res = await transmissionClient.listTorrents({
+        ids: [1, 2],
+      });
+
+      // Assert
+      expect(res).toStrictEqual(
+        torrentList.arguments.torrents.map((t) => ({
+          ...t,
+          status: 'DOWNLOADING',
+        }))
+      );
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-get',
+          arguments: {
+            ids: [1, 2],
+            fields: AllTorrentFields,
+          },
+        })
+      );
+    });
+    it('requests all fields and returns the recently active torrents', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(
+        recentlyActiveTorrentList
+      );
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      const res = await transmissionClient.listTorrents({
+        ids: 'recently-active',
+      });
+
+      // Assert
+      expect(res).toStrictEqual(recentlyActiveTorrentList.arguments);
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-get',
+          arguments: {
+            ids: 'recently-active',
+            fields: AllTorrentFields,
+          },
+        })
+      );
+    });
+    it('throws an error when the request is unsuccessful', async () => {
+      // Prepare
+      const transmissionClient = new TransmissionClient();
 
       // Act & Assess
       await expect(() =>
