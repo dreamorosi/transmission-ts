@@ -3,8 +3,8 @@ import {
   Base,
   PingResponse,
   Session as SessionSchema,
-  Torrent,
   Torrent as TorrentSchema,
+  TorrentAdd as TorrentAddSchema,
 } from '../schemas';
 import { TorrentField } from '../helpers';
 import type { SessionService } from './SessionService';
@@ -82,18 +82,30 @@ type InvalidSessionRetry = {
   maxRetries: number;
 };
 
+/**
+ * The configuration options for addressing torrents
+ */
 type TorrentId = number | number[] | string | string[] | 'recently-active';
 
+/**
+ * The configuration options for listing torrents
+ */
 type ListTorrentsConfig<Ids> = {
   ids?: TorrentId & Ids;
   fields?: (keyof typeof TorrentField)[];
 };
 
+/**
+ * The output of the listTorrents function when the ids option is set to 'recently-active'
+ */
 type ListTorrentsRecentlyActiveOutput = {
   removed: number[];
   torrents: Torrent[];
 };
 
+/**
+ * The output of the listTorrents function
+ */
 type ListTorrentsOutput<Ids extends TorrentId> = Ids extends 'recently-active'
   ? ListTorrentsRecentlyActiveOutput
   : Torrent[];
@@ -112,6 +124,24 @@ type ParseResponseOptions<GenericSchema extends z.ZodType> = {
   response: unknown;
 };
 
+type AddMagnetOptions = {
+  /**
+   * The magnet link to add
+   * @example 'magnet:?xt=urn:btih:...'
+   */
+  magnet: string;
+  /**
+   * The download directory to use
+   * @example '/home/user/Downloads'
+   */
+  downloadDir?: string;
+  /**
+   * Whether or not the torrent should be added in a paused state
+   * @default false
+   */
+  paused?: boolean;
+};
+
 /**
  * The output of the parseResponse function
  */
@@ -125,12 +155,15 @@ type PingResponse = z.infer<typeof PingResponse>;
 
 type Torrent = z.infer<typeof TorrentSchema>;
 
+type TorrentAdd = z.infer<typeof TorrentAddSchema>;
+
 interface TransmissionClient {
   getSession: () => Promise<Session>;
   listTorrents: <Ids extends TorrentId>(
     config?: ListTorrentsConfig<Ids>
   ) => Promise<Torrent[]>;
   ping: () => Promise<void>;
+  addMagnet: (options: AddMagnetOptions) => Promise<TorrentAdd>;
 }
 
 export {
@@ -147,4 +180,6 @@ export {
   ListTorrentsRecentlyActiveOutput,
   ListTorrentsOutput,
   TorrentId,
+  TorrentAdd,
+  AddMagnetOptions,
 };

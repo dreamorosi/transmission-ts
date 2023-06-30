@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { PingResponse, SessionResponse, TorrentResponse } from './schemas';
+import {
+  PingResponse,
+  SessionResponse,
+  TorrentResponse,
+  TorrentAddResponse,
+} from './schemas';
 import { AllTorrentFields } from './helpers';
 import { RequestService } from './RequestService';
 import type {
@@ -12,6 +17,8 @@ import type {
   ListTorrentsConfig,
   TorrentId,
   ListTorrentsOutput,
+  TorrentAdd,
+  AddMagnetOptions,
 } from './types';
 
 class TransmissionClient implements ITransmissionClient {
@@ -25,6 +32,58 @@ class TransmissionClient implements ITransmissionClient {
   public constructor(config?: TransmissionClientConfig) {
     this.#requestService =
       config?.customServices?.requestService || new RequestService(config);
+  }
+
+  /**
+   * Adds a magnet to the Transmission RPC endpoint
+   *
+   * @example
+   * ```ts
+   * client.addMagnet({
+   *   magnet: 'magnet-link',
+   *   downloadDir: '/path/to/download/dir',
+   *   pause: true,
+   * });
+   * ```
+   *
+   * When `downloadDir` is not specified, Transmission will use the default
+   * download directory as specified in the Transmission daemon's settings.
+   *
+   * By default torrent will be added in a started state, to add it in a paused
+   * state, set `paused` to `true`.
+   *
+   * @param options The magnet to add and any additional options
+   * @returns The info of the torrent that was added
+   */
+  public async addMagnet(options: AddMagnetOptions): Promise<TorrentAdd> {
+    const { magnet, downloadDir, ...rest } = options;
+    try {
+      const response = await this.#requestService.request(
+        JSON.stringify({
+          method: 'torrent-add',
+          arguments: {
+            filename: magnet,
+            ...(downloadDir && { 'download-dir': downloadDir }),
+            ...rest,
+          },
+        })
+      );
+      const { arguments: data } = this.parseResponse({
+        schema: TorrentAddResponse,
+        response,
+      });
+
+      // It's safe to typecast here because we know that the response will
+      // always be either a 'torrent-added' or 'torrent-duplicate' object
+      return (data['torrent-added'] || data['torrent-duplicate']) as TorrentAdd;
+    } catch (err) {
+      throw new Error(
+        `Unable to add magnet to Transmission RPC endpoint: ${magnet}`,
+        {
+          cause: err,
+        }
+      );
+    }
   }
 
   /**

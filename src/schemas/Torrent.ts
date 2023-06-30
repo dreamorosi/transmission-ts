@@ -120,4 +120,19 @@ const TorrentResponse = Base.extend({
   }),
 });
 
-export { Torrent, TorrentResponse };
+const TorrentAdd = z.object({
+  hashString: z.string(),
+  id: z.number(),
+  name: z.string(),
+});
+
+const TorrentAddResponse = Base.extend({
+  result: z.literal('success'),
+  arguments: z.record(
+    // z.union([z.literal('torrent-added'), z.literal('torrent-duplicate')]),
+    z.literal('torrent-added').or(z.literal('torrent-duplicate')),
+    TorrentAdd
+  ),
+});
+
+export { Torrent, TorrentResponse, TorrentAdd, TorrentAddResponse };

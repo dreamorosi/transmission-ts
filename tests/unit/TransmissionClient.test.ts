@@ -7,6 +7,8 @@ import {
   recentlyActiveTorrentList,
   torrentList,
   torrentListWithFields,
+  addNewTorrent,
+  addDuplicateTorrent,
 } from '../helpers/responses/torrent';
 
 afterEach(async () => {
@@ -14,55 +16,6 @@ afterEach(async () => {
 });
 
 describe('Class: TransmissionClient', () => {
-  /* describe('Constructor', () => {
-    it('uses the default values when no config is provided', async () => {
-      // Prepare
-      mockPool.intercept(getRequestMatcher()).reply(200, getPingResponse());
-
-      // Act
-      const transmissionClient = new TransmissionClient(
-        {},
-        new SessionDummy('', '')
-      );
-
-      // Assert
-      await transmissionClient.ping();
-      expect(mockAgent.assertNoPendingInterceptors()).toBeUndefined();
-    });
-    it('uses the provided values when a config is provided', async () => {
-      // Prepare
-      // Override the default mockPool
-      mockPool = mockAgent.get('https://somehost:9999');
-      mockPool
-        .intercept(
-          getRequestMatcher({
-            path: '/some/path',
-            headers: {
-              ...getBaseAuthHeader('user', 'pass'),
-            },
-            addAuthHeader: false,
-          })
-        )
-        .reply(200, getPingResponse());
-
-      // Act
-      const transmissionClient = new TransmissionClient(
-        {
-          protocol: 'https',
-          hostname: 'somehost',
-          port: 9999,
-          username: 'user',
-          password: 'pass',
-          pathname: '/some/path',
-        },
-        new SessionDummy('', '')
-      );
-
-      // Assert
-      await transmissionClient.ping();
-      expect(mockAgent.assertNoPendingInterceptors()).toBeUndefined();
-    });
-  }); */
   describe('Method: ping', () => {
     it('returns successfully if the remote returns the expected response', async () => {
       // Prepare
@@ -265,6 +218,93 @@ describe('Class: TransmissionClient', () => {
         transmissionClient.listTorrents()
       ).rejects.toThrowError(
         'Unable to get torrents from Transmission RPC endpoint'
+      );
+    });
+  });
+  describe('Method: addMagnet', () => {
+    it('adds a new torrent and returns its data', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(addNewTorrent);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      const res = await transmissionClient.addMagnet({ magnet: 'magnet-link' });
+
+      // Assess
+      expect(res).toStrictEqual(addNewTorrent.arguments['torrent-added']);
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-add',
+          arguments: {
+            filename: 'magnet-link',
+          },
+        })
+      );
+    });
+    it('adds a duplicate torrent and returns its data', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(
+        addDuplicateTorrent
+      );
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      const res = await transmissionClient.addMagnet({ magnet: 'magnet-link' });
+
+      // Assess
+      expect(res).toStrictEqual(
+        addDuplicateTorrent.arguments['torrent-duplicate']
+      );
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-add',
+          arguments: {
+            filename: 'magnet-link',
+          },
+        })
+      );
+    });
+    it('throws when the remote returns an invalid response', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue({
+        arguments: {
+          'torrent-added': undefined,
+        },
+      });
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act & Assess
+      await expect(() =>
+        transmissionClient.addMagnet({
+          magnet: 'magnet-link',
+          downloadDir: '/',
+        })
+      ).rejects.toThrowError(
+        'Unable to add magnet to Transmission RPC endpoint: magnet-link'
+      );
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-add',
+          arguments: {
+            filename: 'magnet-link',
+            'download-dir': '/',
+          },
+        })
       );
     });
   });

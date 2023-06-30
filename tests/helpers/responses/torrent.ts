@@ -137,4 +137,32 @@ const recentlyActiveTorrentList = {
   result: 'success',
 };
 
-export { torrentList, torrentListWithFields, recentlyActiveTorrentList };
+const addNewTorrent = {
+  arguments: {
+    'torrent-added': {
+      hashString: '803f75f2673f18365b2123fecaeca5ed70cb11ffa',
+      id: 19,
+      name: 'Some Dummy Torrent',
+    },
+  },
+  result: 'success',
+};
+
+const addDuplicateTorrent = {
+  arguments: {
+    'torrent-duplicate': {
+      hashString: '803f75f2673f18365b2123fecaeca5ed70cb11ffa',
+      id: 19,
+      name: 'Some Dummy Torrent',
+    },
+  },
+  result: 'success',
+};
+
+export {
+  torrentList,
+  torrentListWithFields,
+  recentlyActiveTorrentList,
+  addNewTorrent,
+  addDuplicateTorrent,
+};
