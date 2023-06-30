@@ -5,8 +5,8 @@
   "scripts": {
     "init-environment": "husky install",
     "build": "tsc",
-    "lint": "eslint --ext .ts --no-error-on-unmatched-pattern src tests",
-    "lint-fix": "eslint --fix --ext .ts --no-error-on-unmatched-pattern src tests",
+    "lint": "eslint --ext .ts,.js --no-error-on-unmatched-pattern src tests",
+    "lint-fix": "eslint --fix --ext .ts,.js --no-error-on-unmatched-pattern src tests",
     "test": "vitest --run --coverage",
     "docs-generateApiDoc": "typedoc --options typedoc.js"
   },
@@ -35,7 +35,8 @@
     "node": ">=18"
   },
   "lint-staged": {
-    "*.ts": "npm run lint-fix"
+    "*.ts": "npm run lint-fix",
+    "*.js": "npm run lint-fix"
   },
   "devDependencies": {
     "@types/jest": "^29.5.2",
