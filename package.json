@@ -4,7 +4,7 @@
   "description": "An opinionated Transmission RPC client for Node.js written in TypeScript",
   "scripts": {
     "init-environment": "husky install",
-    "build": "tsc",
+    "build": "rimraf ./lib && tsc && rimraf ./lib/tests",
     "lint": "eslint --ext .ts,.js --no-error-on-unmatched-pattern src tests",
     "lint-fix": "eslint --fix --ext .ts,.js --no-error-on-unmatched-pattern src tests",
     "test": "vitest --run --coverage",
@@ -39,6 +39,8 @@
     "*.js": "npm run lint-fix"
   },
   "devDependencies": {
+    "@lerna-lite/publish": "^2.4.3",
+    "@lerna-lite/version": "^2.4.2",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.2",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
@@ -54,6 +56,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^2.8.8",
+    "rimraf": "^5.0.1",
     "typedoc": "^0.24.8",
     "typedoc-plugin-markdown": "^3.15.3",
     "typedoc-plugin-missing-exports": "^2.0.0",
