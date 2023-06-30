@@ -34,6 +34,14 @@
   "engines": {
     "node": ">=18"
   },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "lint-staged": {
     "*.ts": "npm run lint-fix",
     "*.js": "npm run lint-fix"
