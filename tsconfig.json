@@ -4,7 +4,7 @@
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "commonjs",
     "declaration": true,
     "declarationMap": true,
     "outDir": "lib",
