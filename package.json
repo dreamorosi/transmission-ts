@@ -65,12 +65,11 @@
     "skip": {
       "commit": true,
       "tag": true
-    }
+    },
+    "header": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\n"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.4.2",
-    "@lerna-lite/publish": "^2.4.3",
-    "@lerna-lite/version": "^2.4.2",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.2",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
