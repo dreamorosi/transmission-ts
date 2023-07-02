@@ -1,0 +1,15 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+
+### 0.0.1 (2023-07-02)
+
+
+### Features
+
+* added method to fetch recently active torrents ([27110ad](https://github.com/dreamorosi/transmission-ts/commit/27110adaf83d07ebe151a8bdf1e8dc6f8834a24f))
+* addMagnet method ([c8381fb](https://github.com/dreamorosi/transmission-ts/commit/c8381fb5784ff876eab78e4b89c6f095011bc6c7))
+* list torrents ([773b2b6](https://github.com/dreamorosi/transmission-ts/commit/773b2b60865c89942fd2fb4fc553bedb20f5cbc2))
+* remove torrent ([aa1b3bd](https://github.com/dreamorosi/transmission-ts/commit/aa1b3bd43ac7699c05e79249c7acc6edb171b8ee))
+* sessions and request ([eea520e](https://github.com/dreamorosi/transmission-ts/commit/eea520e4008e72c448d8b3bf84c5458af7af0dc1))
