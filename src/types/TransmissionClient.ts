@@ -85,45 +85,39 @@ type InvalidSessionRetry = {
 /**
  * The configuration options for addressing torrents
  */
-type TorrentId = number | number[] | string | string[] | 'recently-active';
+type TorrentId = number | number[];
 
 /**
  * The configuration options for listing torrents
  */
-type ListTorrentsConfig<Ids> = {
-  ids?: (TorrentId | 'recently-active') & Ids;
+type ListTorrentsConfig = {
+  ids?: TorrentId;
+  fields?: (keyof typeof TorrentField)[];
+};
+
+/**
+ * The configuration options for when retrieving recently active torrents
+ *
+ * You can specify the fields to retrieve by setting the `fields` option.
+ */
+type GetRecentlyActiveTorrentsConfig = {
+  /**
+   * The fields to retrieve for each active torrent
+   */
   fields?: (keyof typeof TorrentField)[];
 };
 
 /**
  * The output of the listTorrents function when the ids option is set to 'recently-active'
  */
-type ListTorrentsRecentlyActiveOutput = {
-  removed: number[];
+type GetRecentlyActiveTorrentsOutput = {
+  removed: number[] | undefined;
   torrents: Torrent[];
 };
 
 /**
- * The output of the listTorrents function
+ * The configuration options for adding a magnet torrent
  */
-type ListTorrentsOutput<Ids extends TorrentId> = Ids extends 'recently-active'
-  ? ListTorrentsRecentlyActiveOutput
-  : Torrent[];
-
-/**
- * The options to use when parsing a response
- */
-type ParseResponseOptions<GenericSchema extends z.ZodType> = {
-  /**
-   * The zod schema to use to parse the response
-   */
-  schema: GenericSchema;
-  /**
-   * The response to parse
-   */
-  response: unknown;
-};
-
 type AddMagnetOptions = {
   /**
    * The magnet link to add
@@ -164,6 +158,20 @@ type RemoveTorrentsConfig = {
 };
 
 /**
+ * The options to use when parsing a response
+ */
+type ParseResponseOptions<GenericSchema extends z.ZodType> = {
+  /**
+   * The zod schema to use to parse the response
+   */
+  schema: GenericSchema;
+  /**
+   * The response to parse
+   */
+  response: unknown;
+};
+
+/**
  * The output of the parseResponse function
  */
 type ParseResponseOutput<T extends z.ZodType> = z.infer<T>;
@@ -180,9 +188,10 @@ type TorrentAdd = z.infer<typeof TorrentAddSchema>;
 
 interface TransmissionClient {
   getSession: () => Promise<Session>;
-  listTorrents: <Ids extends TorrentId>(
-    config?: ListTorrentsConfig<Ids>
-  ) => Promise<Torrent[]>;
+  getRecentlyActiveTorrents: (
+    config?: GetRecentlyActiveTorrentsConfig
+  ) => Promise<GetRecentlyActiveTorrentsOutput>;
+  listTorrents: (config?: ListTorrentsConfig) => Promise<Torrent[]>;
   ping: () => Promise<void>;
   addMagnet: (options: AddMagnetOptions) => Promise<TorrentAdd>;
   removeTorrents: (config: RemoveTorrentsConfig) => Promise<void>;
@@ -199,8 +208,8 @@ export {
   Session,
   Torrent,
   ListTorrentsConfig,
-  ListTorrentsRecentlyActiveOutput,
-  ListTorrentsOutput,
+  GetRecentlyActiveTorrentsConfig,
+  GetRecentlyActiveTorrentsOutput,
   TorrentId,
   TorrentAdd,
   AddMagnetOptions,

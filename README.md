@@ -53,14 +53,6 @@ const torrents = await client.getTorrents({
 });
 ```
 
-You can also use the `recently-active` keyword to get the most recently active torrents:
-
-```ts
-const torrents = await client.getTorrents({
-  ids: "recently-active",
-});
-```
-
 When getting torrents you can also select which fields you want to receive by passing in a list of fields:
 
 ```ts
@@ -69,7 +61,7 @@ const torrents = await client.getTorrents({
 });
 ```
 
-A full list of fields can be found in the [API reference](). If you don't pass in any fields, all fields will be returned.
+A full list of fields can be found in the [API reference](https://dreamorosi.github.io/transmission-ts/variables/helpers.AllTorrentFields.html). If you don't pass in any fields, all fields will be returned.
 
 ### Remove torrents
 
@@ -92,21 +84,21 @@ await client.removeTorrents({
 ```
 
 When removing torrents you can also specify whether or not you want to delete the downloaded data by setting the `deleteLocalData` option to `true`. Defaults to `false`.
-```
 
 When deleting torrents you can also specify whether or not you want to delete the downloaded data by setting the `deleteLocalData` option to `true`. Defaults to `false`.
 
 ### Other methods
 
 The following methods are also available:
-- `ping()` - Pings the Transmission RPC server, this is useful to check if the remote server is reachable.
-- `getSession()` - Gets the current Transmission session information, this includes the Transmission daemon configuration.
+- [`getRecentlyActiveTorrents()`](https://dreamorosi.github.io/transmission-ts/classes/TransmissionClient.TransmissionClient.html#getRecentlyActiveTorrents) - Gets the recently active torrents, this is useful to get a list of torrents that are currently present or have recently been deleted.
+- [`ping()`](https://dreamorosi.github.io/transmission-ts/classes/TransmissionClient.TransmissionClient.html#ping) - Pings the Transmission RPC server, this is useful to check if the remote server is reachable.
+- [`getSession()`](https://dreamorosi.github.io/transmission-ts/classes/TransmissionClient.TransmissionClient.html#getSession) - Gets the current Transmission session information, this includes the Transmission daemon configuration.
 
-For a full list of methods and their options, see the [API reference]().
+For a full list of methods and their options, see the [API reference](https://dreamorosi.github.io/transmission-ts/classes/TransmissionClient.TransmissionClient.html).
 
 ## License
 
-This project is licensed under the MIT-0 License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT-0 License - see the [LICENSE](./LICENSE) file for details.
 
 ## Contributing
 

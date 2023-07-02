@@ -16,11 +16,12 @@ import type {
   ParseResponseOutput,
   RequestService as IRequestService,
   ListTorrentsConfig,
-  TorrentId,
-  ListTorrentsOutput,
+  Torrent,
   TorrentAdd,
   AddMagnetOptions,
   RemoveTorrentsConfig,
+  GetRecentlyActiveTorrentsConfig,
+  GetRecentlyActiveTorrentsOutput,
 } from './types';
 
 class TransmissionClient implements ITransmissionClient {
@@ -89,6 +90,60 @@ class TransmissionClient implements ITransmissionClient {
   }
 
   /**
+   * Fetch the lists of recently active torrents from the Transmission RPC
+   *
+   * The method returns two lists of torrents, the first called `removed` contains the ids of torrents that were removed,
+   * the second called `torrents` contains the info of the torrents that were added or updated.
+   *
+   * @example
+   * ```ts
+   * const recentlyActiveTorrents = await client.getRecentlyActiveTorrents();
+   * ```
+   *
+   * When getting torrents you can also select which `fields` you want to receive by passing in a list of fields:
+   *
+   * @example
+   * ```ts
+   * const torrents = await client.getRecentlyActiveTorrents({
+   *   fields: ['id', 'name', 'status'],
+   * });
+   * ```
+   *
+   * If no `fields` are specified, all fields will be returned. For a full list of fields see {@link AllTorrentFields}.
+   *
+   * @param config The fields to get for each torrent
+   * @returns The lists of recently active torrents
+   */
+  public async getRecentlyActiveTorrents(
+    config?: GetRecentlyActiveTorrentsConfig
+  ): Promise<GetRecentlyActiveTorrentsOutput> {
+    try {
+      const response = await this.#requestService.request(
+        JSON.stringify({
+          method: 'torrent-get',
+          arguments: {
+            ids: 'recently-active',
+            fields: config?.fields || AllTorrentFields,
+          },
+        })
+      );
+      const { arguments: data } = this.parseResponse({
+        schema: TorrentResponse,
+        response,
+      });
+
+      return data as GetRecentlyActiveTorrentsOutput;
+    } catch (err) {
+      throw new Error(
+        'Unable to get recently active torrents from Transmission RPC endpoint',
+        {
+          cause: err,
+        }
+      );
+    }
+  }
+
+  /**
    * Gets the current Transmission session, which includes the information
    * about the Transmission server and the current session.
    *
@@ -132,15 +187,6 @@ class TransmissionClient implements ITransmissionClient {
    * });
    * ```
    *
-   * You can also use the `recently-active` keyword to get the most recently active torrents:
-   *
-   * @example
-   * ```ts
-   * const torrents = await client.getTorrents({
-   *   ids: 'recently-active',
-   * });
-   * ```
-   *
    * When getting torrents you can also select which `fields` you want to receive by passing in a list of fields:
    *
    * @example
@@ -154,9 +200,7 @@ class TransmissionClient implements ITransmissionClient {
    *
    * @returns A list of torrents from the Transmission RPC endpoint
    */
-  public async listTorrents<Ids extends TorrentId>(
-    config?: ListTorrentsConfig<Ids>
-  ): Promise<ListTorrentsOutput<Ids>> {
+  public async listTorrents(config?: ListTorrentsConfig): Promise<Torrent[]> {
     try {
       const response = await this.#requestService.request(
         JSON.stringify({
@@ -173,11 +217,7 @@ class TransmissionClient implements ITransmissionClient {
         response,
       });
 
-      if (config?.ids === 'recently-active') {
-        return data as ListTorrentsOutput<Ids>;
-      } else {
-        return data.torrents as ListTorrentsOutput<Ids>;
-      }
+      return data.torrents;
     } catch (err) {
       throw new Error('Unable to get torrents from Transmission RPC endpoint', {
         cause: err,
