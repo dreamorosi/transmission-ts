@@ -24,5 +24,9 @@ jobs:
           npm set "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}"
       - name: Setup Node and dependencies
         uses: ./.github/actions/cached-node
+      - name: Bump version
+        run: npx standard-version
+      - name: Push changelog and tags
+        run: git push --follow-tags origin HEAD:main
       - name: Publish to npm
         run: npm publish --provenance --access public
