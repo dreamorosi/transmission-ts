@@ -62,10 +62,6 @@
     "outDir": "./lib"
   },
   "standard-version": {
-    "skip": {
-      "commit": true,
-      "tag": true
-    },
     "header": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\n"
   },
   "devDependencies": {
