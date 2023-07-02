@@ -8,6 +8,7 @@ concurrency:
 
 jobs:
   publish-npm:
+    environment: npm
     # Needed as recommended by npm docs on publishing with provenance https://docs.npmjs.com/generating-provenance-statements
     permissions:
       id-token: write
