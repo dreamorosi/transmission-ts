@@ -87,6 +87,30 @@ When removing torrents you can also specify whether or not you want to delete th
 
 When deleting torrents you can also specify whether or not you want to delete the downloaded data by setting the `deleteLocalData` option to `true`. Defaults to `false`.
 
+### Change torrent status
+
+You can start one or more torrents by passing in one or more ids:
+
+```ts
+// Start torrent with id 1
+await client.startTorrents({
+  ids: 1,
+});
+// Start torrents with ids 1 and 2
+await client.startTorrents({
+  ids: [1, 2],
+});
+```
+
+Optionally, you can also pass in a `now` option to start the torrent immediately:
+
+```ts
+await client.startTorrents({
+  ids: 1,
+  now: true,
+});
+```
+
 ### Other methods
 
 The following methods are also available:

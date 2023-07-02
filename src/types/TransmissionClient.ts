@@ -158,6 +158,43 @@ type RemoveTorrentsConfig = {
 };
 
 /**
+ * The configuration options for starting one or more torrents
+ *
+ * You can pass a single ID or an array of IDs to remove multiple torrents.
+ * If no IDs are passed, all torrents will be started.
+ *
+ * Optionally, you can set the `now` option to `true` to start the torrents immediately.
+ */
+type StartTorrentsConfig = {
+  /**
+   * The ID or IDs of the torrents to remove
+   * @example 1
+   * @example
+   */
+  ids: TorrentId;
+  /**
+   * Whether or not to start the torrents immediately
+   * @default false
+   */
+  now?: boolean;
+};
+
+/**
+ * The configuration options for stopping one or more torrents
+ *
+ * You can pass a single ID or an array of IDs to remove multiple torrents.
+ * If no IDs are passed, all torrents will be stopped.
+ */
+type StopTorrentsTorrentsConfig = {
+  /**
+   * The ID or IDs of the torrents to remove
+   * @example 1
+   * @example
+   */
+  ids: TorrentId;
+};
+
+/**
  * The options to use when parsing a response
  */
 type ParseResponseOptions<GenericSchema extends z.ZodType> = {
@@ -214,4 +251,6 @@ export {
   TorrentAdd,
   AddMagnetOptions,
   RemoveTorrentsConfig,
+  StartTorrentsConfig,
+  StopTorrentsTorrentsConfig,
 };

@@ -5,6 +5,7 @@ import {
   TorrentResponse,
   TorrentAddResponse,
   RemoveTorrentResponse,
+  StartTorrentsResponse,
 } from './schemas';
 import { AllTorrentFields } from './helpers';
 import { RequestService } from './RequestService';
@@ -22,6 +23,7 @@ import type {
   RemoveTorrentsConfig,
   GetRecentlyActiveTorrentsConfig,
   GetRecentlyActiveTorrentsOutput,
+  StartTorrentsConfig,
 } from './types';
 
 class TransmissionClient implements ITransmissionClient {
@@ -286,6 +288,51 @@ class TransmissionClient implements ITransmissionClient {
     } catch (err) {
       throw new Error(
         'Unable to remove torrents from the Transmission RPC endpoint',
+        {
+          cause: err,
+        }
+      );
+    }
+  }
+
+  /**
+   * Starts one or more torrents on the Transmission RPC endpoint
+   *
+   * You can start torrents by addressing them by their id:
+   *
+   * @example
+   * ```ts
+   * // Start torrent with id 1
+   * await client.startTorrents({
+   *   ids: 1,
+   * });
+   * // Start torrents with ids 1 and 2
+   * await client.startTorrents({
+   *   ids: [1, 2],
+   * });
+   * ```
+   *
+   * If no `ids` are specified, all torrents will be started.
+   *
+   * @param config Specifies which torrents to start
+   */
+  public async startTorrents(config?: StartTorrentsConfig): Promise<void> {
+    try {
+      const response = await this.#requestService.request(
+        JSON.stringify({
+          method: config?.now ? 'torrent-start-now' : 'torrent-start',
+          arguments: {
+            ...(config?.ids && { ids: config.ids }),
+          },
+        })
+      );
+      this.parseResponse({
+        schema: StartTorrentsResponse,
+        response,
+      });
+    } catch (err) {
+      throw new Error(
+        'Unable to start torrents in the Transmission RPC endpoint',
         {
           cause: err,
         }

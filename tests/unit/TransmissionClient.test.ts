@@ -10,6 +10,7 @@ import {
   addNewTorrent,
   addDuplicateTorrent,
   removeTorrent,
+  startTorrent,
 } from '../helpers/responses/torrent';
 
 afterEach(async () => {
@@ -413,6 +414,100 @@ describe('Class: TransmissionClient', () => {
             'delete-local-data': true,
           },
         })
+      );
+    });
+  });
+  describe('Method: startTorrents', () => {
+    it('starts all torrents when no id is passed', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(startTorrent);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      await transmissionClient.startTorrents();
+
+      // Assert
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-start',
+          arguments: {},
+        })
+      );
+    });
+    it('starts the torrents specified when passing their ids', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(startTorrent);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      await transmissionClient.startTorrents({
+        ids: [1, 2],
+      });
+
+      // Assert
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-start',
+          arguments: {
+            ids: [1, 2],
+          },
+        })
+      );
+    });
+    it('starts the torrent immediately when requested', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(startTorrent);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      await transmissionClient.startTorrents({
+        ids: 1,
+        now: true,
+      });
+
+      // Assert
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-start-now',
+          arguments: {
+            ids: 1,
+          },
+        })
+      );
+    });
+    it('throws an error when the request is unsuccessful', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue({
+        arguments: {},
+        result: 'failure',
+      });
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act & Assess
+      await expect(() =>
+        transmissionClient.startTorrents()
+      ).rejects.toThrowError(
+        'Unable to start torrents in the Transmission RPC endpoint'
       );
     });
   });

@@ -160,10 +160,30 @@ const RemoveTorrentResponse = Base.extend({
   arguments: z.object({}),
 });
 
+/**
+ * @internal
+ * Schema for the expected response when starting one or more torrents
+ */
+const StartTorrentsResponse = Base.extend({
+  result: z.literal('success'),
+  arguments: z.object({}),
+});
+
+/**
+ * @internal
+ * Schema for the expected response when stopping one or more torrents
+ */
+const StopTorrentsResponse = Base.extend({
+  result: z.literal('success'),
+  arguments: z.object({}),
+});
+
 export {
   Torrent,
   TorrentResponse,
   TorrentAdd,
   TorrentAddResponse,
   RemoveTorrentResponse,
+  StartTorrentsResponse,
+  StopTorrentsResponse,
 };

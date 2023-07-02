@@ -164,6 +164,16 @@ const removeTorrent = {
   result: 'success',
 };
 
+const startTorrent = {
+  arguments: {},
+  result: 'success',
+};
+
+const stopTorrent = {
+  arguments: {},
+  result: 'success',
+};
+
 export {
   torrentList,
   torrentListWithFields,
@@ -171,4 +181,6 @@ export {
   addNewTorrent,
   addDuplicateTorrent,
   removeTorrent,
+  startTorrent,
+  stopTorrent,
 };
