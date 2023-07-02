@@ -1,0 +1,22 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/TransmissionClient.ts",
+    "src/RequestService.ts",
+    "src/SessionService.ts",
+    "src/helpers.ts",
+    "src/types/index.ts"
+  ],
+  "entryPointStrategy": "expand",
+  "name": "transmission-ts",
+  "readme": "README.md",
+  "out": "api",
+  "skipErrorChecking": true,
+  "excludePrivate": true,
+  "visibilityFilters": {
+    "protected": true,
+    "private": false,
+    "inherited": true,
+    "external": true
+  }
+}

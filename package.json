@@ -8,7 +8,7 @@
     "lint": "eslint --ext .ts,.js --no-error-on-unmatched-pattern src tests",
     "lint-fix": "eslint --fix --ext .ts,.js --no-error-on-unmatched-pattern src tests",
     "test": "vitest --run --coverage",
-    "docs-generateApiDoc": "typedoc --options typedoc.js"
+    "docs-generateApiDoc": "typedoc --options typedoc.json"
   },
   "keywords": [
     "transmission",
