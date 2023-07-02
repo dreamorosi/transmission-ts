@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 
 
+### 0.0.3 (2023-07-02)
+
+
+### Bug Fixes
+
+* properly handle single id ([dcfd156](https://github.com/dreamorosi/transmission-ts/commit/dcfd1561dd36f2bc898b17cfaed5dd36538ef1e7))
+
 ### 0.0.2 (2023-07-02)
 
 

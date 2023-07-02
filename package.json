@@ -1,6 +1,6 @@
 {
   "name": "transmission-ts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "An opinionated Transmission RPC client for Node.js written in TypeScript",
   "scripts": {
     "init-environment": "husky install",
