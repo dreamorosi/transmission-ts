@@ -1,0 +1,25 @@
+name: Make Release
+
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: on-release-publish
+
+jobs:
+  publish-npm:
+    # Needed as recommended by npm docs on publishing with provenance https://docs.npmjs.com/generating-provenance-statements
+    permissions:
+      id-token: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup auth tokens
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          npm set "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}"
+      - name: Setup Node and dependencies
+        uses: ./.github/actions/cached-node
+      - name: Publish to npm
+        run: npm publish --provenance --access public
