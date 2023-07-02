@@ -61,6 +61,12 @@
     "dts": true,
     "outDir": "./lib"
   },
+  "standard-version": {
+    "skip": {
+      "commit": true,
+      "tag": true
+    }
+  },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.4.2",
     "@lerna-lite/publish": "^2.4.3",
@@ -80,6 +86,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^2.8.8",
+    "standard-version": "^9.5.0",
     "tsup": "^7.1.0",
     "typedoc": "^0.24.8",
     "typedoc-plugin-markdown": "^3.15.3",
