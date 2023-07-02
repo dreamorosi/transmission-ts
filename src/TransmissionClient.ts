@@ -210,7 +210,9 @@ class TransmissionClient implements ITransmissionClient {
         JSON.stringify({
           method: 'torrent-get',
           arguments: {
-            ...(config?.ids && { ids: config.ids }),
+            ...(config?.ids && {
+              ids: Array.isArray(config.ids) ? config.ids : [config.ids],
+            }),
             fields: config?.fields || AllTorrentFields,
           },
         })
@@ -278,7 +280,7 @@ class TransmissionClient implements ITransmissionClient {
         JSON.stringify({
           method: 'torrent-remove',
           arguments: {
-            ids: config.ids,
+            ids: Array.isArray(config.ids) ? config.ids : [config.ids],
             'delete-local-data': config?.deleteLocalData || false,
           },
         })
@@ -326,7 +328,9 @@ class TransmissionClient implements ITransmissionClient {
         JSON.stringify({
           method: config?.now ? 'torrent-start-now' : 'torrent-start',
           arguments: {
-            ...(config?.ids && { ids: config.ids }),
+            ...(config?.ids && {
+              ids: Array.isArray(config.ids) ? config.ids : [config.ids],
+            }),
           },
         })
       );
@@ -371,7 +375,9 @@ class TransmissionClient implements ITransmissionClient {
         JSON.stringify({
           method: 'torrent-stop',
           arguments: {
-            ...(config?.ids && { ids: config.ids }),
+            ...(config?.ids && {
+              ids: Array.isArray(config.ids) ? config.ids : [config.ids],
+            }),
           },
         })
       );

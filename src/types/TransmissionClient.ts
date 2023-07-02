@@ -171,7 +171,7 @@ type StartTorrentsConfig = {
    * @example 1
    * @example
    */
-  ids: TorrentId;
+  ids?: TorrentId;
   /**
    * Whether or not to start the torrents immediately
    * @default false

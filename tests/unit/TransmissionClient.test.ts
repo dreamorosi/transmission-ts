@@ -259,6 +259,35 @@ describe('Class: TransmissionClient', () => {
         })
       );
     });
+    it('requests only the specified torrent when only one id is provided', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(
+        torrentListWithFields
+      );
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      const res = await transmissionClient.listTorrents({
+        ids: 1,
+      });
+
+      // Assert
+      expect(res).toStrictEqual(torrentListWithFields.arguments.torrents);
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-get',
+          arguments: {
+            ids: [1],
+            fields: AllTorrentFields,
+          },
+        })
+      );
+    });
     it('throws an error when the request is unsuccessful', async () => {
       // Prepare
       const transmissionClient = new TransmissionClient();
@@ -359,7 +388,7 @@ describe('Class: TransmissionClient', () => {
     });
   });
   describe('Method: removeTorrent', () => {
-    it('removes a torrent', async () => {
+    it('removes the torrent specified when only one id is passed', async () => {
       // Prepare
       const requestService = getDummyRequestService();
       vi.spyOn(requestService, 'request').mockResolvedValue(removeTorrent);
@@ -377,7 +406,31 @@ describe('Class: TransmissionClient', () => {
         JSON.stringify({
           method: 'torrent-remove',
           arguments: {
-            ids: 1,
+            ids: [1],
+            'delete-local-data': false,
+          },
+        })
+      );
+    });
+    it('removes all torrents when only multiple ids are passed', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(removeTorrent);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      await transmissionClient.removeTorrents({ ids: [1, 2] });
+
+      // Assess
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-remove',
+          arguments: {
+            ids: [1, 2],
             'delete-local-data': false,
           },
         })
@@ -410,7 +463,7 @@ describe('Class: TransmissionClient', () => {
         JSON.stringify({
           method: 'torrent-remove',
           arguments: {
-            ids: 1,
+            ids: [1],
             'delete-local-data': true,
           },
         })
@@ -485,7 +538,7 @@ describe('Class: TransmissionClient', () => {
         JSON.stringify({
           method: 'torrent-start-now',
           arguments: {
-            ids: 1,
+            ids: [1],
           },
         })
       );
@@ -530,6 +583,31 @@ describe('Class: TransmissionClient', () => {
         JSON.stringify({
           method: 'torrent-stop',
           arguments: {},
+        })
+      );
+    });
+    it('stops the torrent specified when passing only one id', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(startTorrent);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      await transmissionClient.stopTorrents({
+        ids: 1,
+      });
+
+      // Assert
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-stop',
+          arguments: {
+            ids: [1],
+          },
         })
       );
     });
