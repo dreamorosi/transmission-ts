@@ -27,6 +27,8 @@ jobs:
         uses: actions/configure-pages@f156874f8191504dae5b037505266ed5dda6c382 # v3.0.6
       - name: Setup Node and dependencies
         uses: ./.github/actions/cached-node
+        with:
+          skipBuild: true
       - name: Build docs
         run: npm run docs-generateApiDoc
       - name: Upload artifact

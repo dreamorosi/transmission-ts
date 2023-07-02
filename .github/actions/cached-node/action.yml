@@ -1,9 +1,12 @@
 name: 'Cached Node'
 description: 'A simple action that sets up Node and npm from cache if possible, and then caches the node_modules folder.'
 inputs:
-  nodeVersion: # id of input
+  nodeVersion:
     description: 'Node.js version to use'
     default: '18'
+  skipBuild:
+    description: 'Whether to skip the build step or not'
+    default: 'false'
 outputs:
   cache-hit:
     description: 'Whether the cache was hit or not'
@@ -34,6 +37,7 @@ runs:
       run: npm ci
       shell: bash
     - name: Build packages
+      if: ${{ inputs.skipBuild == 'false' }}
       # Regardless of whether the cache was hit or not, we need to build the packages.
       run: npm run build
       shell: bash
