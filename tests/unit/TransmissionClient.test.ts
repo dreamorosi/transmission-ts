@@ -511,4 +511,72 @@ describe('Class: TransmissionClient', () => {
       );
     });
   });
+  describe('Method: stopTorrents', () => {
+    it('stops all torrents when no id is passed', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(startTorrent);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      await transmissionClient.stopTorrents();
+
+      // Assert
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-stop',
+          arguments: {},
+        })
+      );
+    });
+    it('stops the torrents specified when passing their ids', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(startTorrent);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      await transmissionClient.stopTorrents({
+        ids: [1, 2],
+      });
+
+      // Assert
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-stop',
+          arguments: {
+            ids: [1, 2],
+          },
+        })
+      );
+    });
+    it('throws an error when the request is unsuccessful', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue({
+        arguments: {},
+        result: 'failure',
+      });
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act & Assess
+      await expect(() =>
+        transmissionClient.stopTorrents()
+      ).rejects.toThrowError(
+        'Unable to stop torrents in the Transmission RPC endpoint'
+      );
+    });
+  });
 });

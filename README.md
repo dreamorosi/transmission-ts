@@ -111,6 +111,19 @@ await client.startTorrents({
 });
 ```
 
+You can also stop one or more torrents by passing in one or more ids:
+
+```ts
+// Stop torrent with id 1
+await client.stopTorrents({
+  ids: 1,
+});
+// Stop torrents with ids 1 and 2
+await client.stopTorrents({
+  ids: [1, 2],
+});
+```
+
 ### Other methods
 
 The following methods are also available:

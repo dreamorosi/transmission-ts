@@ -185,7 +185,7 @@ type StartTorrentsConfig = {
  * You can pass a single ID or an array of IDs to remove multiple torrents.
  * If no IDs are passed, all torrents will be stopped.
  */
-type StopTorrentsTorrentsConfig = {
+type StopTorrentsConfig = {
   /**
    * The ID or IDs of the torrents to remove
    * @example 1
@@ -252,5 +252,5 @@ export {
   AddMagnetOptions,
   RemoveTorrentsConfig,
   StartTorrentsConfig,
-  StopTorrentsTorrentsConfig,
+  StopTorrentsConfig,
 };

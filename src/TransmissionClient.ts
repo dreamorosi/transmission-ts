@@ -6,6 +6,7 @@ import {
   TorrentAddResponse,
   RemoveTorrentResponse,
   StartTorrentsResponse,
+  StopTorrentsResponse,
 } from './schemas';
 import { AllTorrentFields } from './helpers';
 import { RequestService } from './RequestService';
@@ -24,6 +25,7 @@ import type {
   GetRecentlyActiveTorrentsConfig,
   GetRecentlyActiveTorrentsOutput,
   StartTorrentsConfig,
+  StopTorrentsConfig,
 } from './types';
 
 class TransmissionClient implements ITransmissionClient {
@@ -312,6 +314,8 @@ class TransmissionClient implements ITransmissionClient {
    * });
    * ```
    *
+   * Optionally you can also start the torrents immediately by setting the `now` option to `true`.
+   *
    * If no `ids` are specified, all torrents will be started.
    *
    * @param config Specifies which torrents to start
@@ -333,6 +337,51 @@ class TransmissionClient implements ITransmissionClient {
     } catch (err) {
       throw new Error(
         'Unable to start torrents in the Transmission RPC endpoint',
+        {
+          cause: err,
+        }
+      );
+    }
+  }
+
+  /**
+   * Stops one or more torrents on the Transmission RPC endpoint
+   *
+   * You can stop torrents by addressing them by their id:
+   *
+   * @example
+   * ```ts
+   * // Stop torrent with id 1
+   * await client.stopTorrents({
+   *   ids: 1,
+   * });
+   * // Stop torrents with ids 1 and 2
+   * await client.stopTorrents({
+   *   ids: [1, 2],
+   * });
+   * ```
+   *
+   * If no `ids` are specified, all torrents will be stopped.
+   *
+   * @param config Specifies which torrents to stop
+   */
+  public async stopTorrents(config?: StopTorrentsConfig): Promise<void> {
+    try {
+      const response = await this.#requestService.request(
+        JSON.stringify({
+          method: 'torrent-stop',
+          arguments: {
+            ...(config?.ids && { ids: config.ids }),
+          },
+        })
+      );
+      this.parseResponse({
+        schema: StopTorrentsResponse,
+        response,
+      });
+    } catch (err) {
+      throw new Error(
+        'Unable to stop torrents in the Transmission RPC endpoint',
         {
           cause: err,
         }
