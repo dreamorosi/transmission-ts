@@ -9,6 +9,7 @@ import {
   torrentListWithFields,
   addNewTorrent,
   addDuplicateTorrent,
+  removeTorrent,
 } from '../helpers/responses/torrent';
 
 afterEach(async () => {
@@ -303,6 +304,65 @@ describe('Class: TransmissionClient', () => {
           arguments: {
             filename: 'magnet-link',
             'download-dir': '/',
+          },
+        })
+      );
+    });
+  });
+  describe('Method: removeTorrent', () => {
+    it('removes a torrent', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue(removeTorrent);
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act
+      await transmissionClient.removeTorrents({ ids: 1 });
+
+      // Assess
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-remove',
+          arguments: {
+            ids: 1,
+            'delete-local-data': false,
+          },
+        })
+      );
+    });
+    it('throws when the remote returns an invalid response', async () => {
+      // Prepare
+      const requestService = getDummyRequestService();
+      vi.spyOn(requestService, 'request').mockResolvedValue({
+        arguments: {
+          'torrent-removed': undefined,
+        },
+      });
+      const transmissionClient = new TransmissionClient({
+        customServices: {
+          requestService,
+        },
+      });
+
+      // Act & Assess
+      await expect(() =>
+        transmissionClient.removeTorrents({
+          ids: 1,
+          deleteLocalData: true,
+        })
+      ).rejects.toThrowError(
+        'Unable to remove torrents from the Transmission RPC endpoint'
+      );
+      expect(requestService.request).toHaveBeenCalledWith(
+        JSON.stringify({
+          method: 'torrent-remove',
+          arguments: {
+            ids: 1,
+            'delete-local-data': true,
           },
         })
       );

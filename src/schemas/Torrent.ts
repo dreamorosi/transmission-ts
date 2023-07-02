@@ -16,6 +16,10 @@ const getStatus = (
   return Status[key];
 };
 
+/**
+ * @internal
+ * Schema for the expected item shape of a torrent
+ */
 const Torrent = z.object({
   activityDate: z.number().optional(),
   addedDate: z.number().optional(),
@@ -112,6 +116,10 @@ const Torrent = z.object({
   webseedsSendingToUs: z.number().optional(),
 });
 
+/**
+ * @internal
+ * Schema for the expected response when getting recently active torrents
+ */
 const TorrentResponse = Base.extend({
   result: z.literal('success'),
   arguments: z.object({
@@ -120,19 +128,42 @@ const TorrentResponse = Base.extend({
   }),
 });
 
+/**
+ * @internal
+ * Schema for the expected item shape when adding a torrent,
+ * see {@link TorrentAddResponse}.
+ */
 const TorrentAdd = z.object({
   hashString: z.string(),
   id: z.number(),
   name: z.string(),
 });
 
+/**
+ * @internal
+ * Schema for the expected response when adding a torrent
+ */
 const TorrentAddResponse = Base.extend({
   result: z.literal('success'),
   arguments: z.record(
-    // z.union([z.literal('torrent-added'), z.literal('torrent-duplicate')]),
     z.literal('torrent-added').or(z.literal('torrent-duplicate')),
     TorrentAdd
   ),
 });
 
-export { Torrent, TorrentResponse, TorrentAdd, TorrentAddResponse };
+/**
+ * @internal
+ * Schema for the expected response when removing one or more torrents
+ */
+const RemoveTorrentResponse = Base.extend({
+  result: z.literal('success'),
+  arguments: z.object({}),
+});
+
+export {
+  Torrent,
+  TorrentResponse,
+  TorrentAdd,
+  TorrentAddResponse,
+  RemoveTorrentResponse,
+};

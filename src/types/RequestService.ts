@@ -5,10 +5,16 @@ import type {
   InvalidSessionRetry,
 } from './';
 
+/**
+ * Interface for the RequestService which is used to make requests
+ */
 interface RequestService {
   request(body?: BodyInit): Promise<unknown>;
 }
 
+/**
+ * The configuration options for the RequestService
+ */
 interface RequestServiceConfig
   extends Omit<TransmissionClientConfig, 'customServices'> {
   /**

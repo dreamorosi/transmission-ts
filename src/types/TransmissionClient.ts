@@ -91,7 +91,7 @@ type TorrentId = number | number[] | string | string[] | 'recently-active';
  * The configuration options for listing torrents
  */
 type ListTorrentsConfig<Ids> = {
-  ids?: TorrentId & Ids;
+  ids?: (TorrentId | 'recently-active') & Ids;
   fields?: (keyof typeof TorrentField)[];
 };
 
@@ -143,6 +143,27 @@ type AddMagnetOptions = {
 };
 
 /**
+ * The configuration options for removing torrents
+ *
+ * You can pass a single ID or an array of IDs to remove multiple torrents.
+ * Optionally, you can set the `deleteLocalData` option to `true` to delete the
+ * torrent's data from the disk.
+ */
+type RemoveTorrentsConfig = {
+  /**
+   * The ID or IDs of the torrents to remove
+   * @example 1
+   * @example
+   */
+  ids: TorrentId;
+  /**
+   * Whether or not to delete the torrent's data
+   * @default false
+   */
+  deleteLocalData?: boolean;
+};
+
+/**
  * The output of the parseResponse function
  */
 type ParseResponseOutput<T extends z.ZodType> = z.infer<T>;
@@ -164,6 +185,7 @@ interface TransmissionClient {
   ) => Promise<Torrent[]>;
   ping: () => Promise<void>;
   addMagnet: (options: AddMagnetOptions) => Promise<TorrentAdd>;
+  removeTorrents: (config: RemoveTorrentsConfig) => Promise<void>;
 }
 
 export {
@@ -182,4 +204,5 @@ export {
   TorrentId,
   TorrentAdd,
   AddMagnetOptions,
+  RemoveTorrentsConfig,
 };

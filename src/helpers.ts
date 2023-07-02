@@ -1,5 +1,7 @@
 /**
- * Fields that can be used to query torrents
+ * Fields that can be used to get torrents from the Transmission RPC endpoint
+ *
+ * The list aligns with the {@link https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md#33-torrent-accessor-torrent-get Transmission Spec}.
  */
 const TorrentField = {
   id: 'id',
@@ -70,7 +72,8 @@ const AllTorrentFields = Object.values(TorrentField);
 
 /**
  * Status codes mapped to their string representation
- * @see https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md#33-torrent-accessor-torrent-get
+ *
+ * The status codes align with the {@link https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md#33-torrent-accessor-torrent-get Transmission Spec}.
  */
 const Status = {
   0: 'STOPPED',

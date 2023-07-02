@@ -159,10 +159,16 @@ const addDuplicateTorrent = {
   result: 'success',
 };
 
+const removeTorrent = {
+  arguments: {},
+  result: 'success',
+};
+
 export {
   torrentList,
   torrentListWithFields,
   recentlyActiveTorrentList,
   addNewTorrent,
   addDuplicateTorrent,
+  removeTorrent,
 };

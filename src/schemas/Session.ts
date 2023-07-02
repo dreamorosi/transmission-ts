@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { Base } from './Base';
 
+/**
+ * @internal
+ * Schema for the expected item shape of a session
+ */
 const Session = z.object({
   'alt-speed-down': z.number(),
   'alt-speed-enabled': z.boolean(),
@@ -61,6 +65,10 @@ const Session = z.object({
   version: z.string(),
 });
 
+/**
+ * @internal
+ * Schema for the expected response when getting the session
+ */
 const SessionResponse = Base.extend({
   result: z.literal('success'),
   arguments: Session,

@@ -4,6 +4,7 @@ import {
   SessionResponse,
   TorrentResponse,
   TorrentAddResponse,
+  RemoveTorrentResponse,
 } from './schemas';
 import { AllTorrentFields } from './helpers';
 import { RequestService } from './RequestService';
@@ -19,6 +20,7 @@ import type {
   ListTorrentsOutput,
   TorrentAdd,
   AddMagnetOptions,
+  RemoveTorrentsConfig,
 } from './types';
 
 class TransmissionClient implements ITransmissionClient {
@@ -116,8 +118,41 @@ class TransmissionClient implements ITransmissionClient {
   }
 
   /**
-   * Gets a list of all torrents from the Transmission RPC endpoint
-   * @returns A list of all torrents
+   * Gets a list of torrents from the Transmission RPC endpoint
+   *
+   * If no `ids` are specified, all torrents will be returned.
+   *
+   * @example
+   * ```ts
+   * // List all torrents currently in Transmission
+   * const torrents = await client.getTorrents();
+   * // List torrents with ids 1 and 2
+   * const torrents = await client.getTorrents({
+   *   ids: [1, 2],
+   * });
+   * ```
+   *
+   * You can also use the `recently-active` keyword to get the most recently active torrents:
+   *
+   * @example
+   * ```ts
+   * const torrents = await client.getTorrents({
+   *   ids: 'recently-active',
+   * });
+   * ```
+   *
+   * When getting torrents you can also select which `fields` you want to receive by passing in a list of fields:
+   *
+   * @example
+   * ```ts
+   * const torrents = await client.getTorrents({
+   *   fields: ['id', 'name', 'status'],
+   * });
+   * ```
+   *
+   * If no `fields` are specified, all fields will be returned. For a full list of fields see {@link AllTorrentFields}.
+   *
+   * @returns A list of torrents from the Transmission RPC endpoint
    */
   public async listTorrents<Ids extends TorrentId>(
     config?: ListTorrentsConfig<Ids>
@@ -170,6 +205,56 @@ class TransmissionClient implements ITransmissionClient {
   }
 
   /**
+   * Remove one or more torrents from the Transmission RPC endpoint
+   *
+   * You can remove torrents by addressing them by their id:
+   *
+   * @example
+   * ```ts
+   * // Remove torrent with id 1
+   * await client.removeTorrents({
+   *   ids: 1,
+   * });
+   * // Remove torrents with ids 1 and 2
+   * await client.removeTorrents({
+   *   ids: [1, 2],
+   * });
+   * // Remove torrent and delete downloaded data
+   * await client.removeTorrents({
+   *   ids: 1,
+   *   deleteLocalData: true,
+   * });
+   * ```
+   *
+   * When removing torrents you can also set the `deleteLocalData` option to true to delete the downloaded data.
+   */
+  public async removeTorrents(config: RemoveTorrentsConfig): Promise<void> {
+    try {
+      const response = await this.#requestService.request(
+        JSON.stringify({
+          method: 'torrent-remove',
+          arguments: {
+            ids: config.ids,
+            'delete-local-data': config?.deleteLocalData || false,
+          },
+        })
+      );
+      this.parseResponse({
+        schema: RemoveTorrentResponse,
+        response,
+      });
+    } catch (err) {
+      throw new Error(
+        'Unable to remove torrents from the Transmission RPC endpoint',
+        {
+          cause: err,
+        }
+      );
+    }
+  }
+
+  /**
+   * @private
    * Parses the response from the Transmission RPC endpoint using
    * the provided schema and throws an error if unable to parse the response
    * or when the response is not as expected.
