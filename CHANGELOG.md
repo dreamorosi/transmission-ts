@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 
 
+### 0.0.2 (2023-07-02)
+
+
+### Features
+
+* added method to stop a torrent ([bfe36d9](https://github.com/dreamorosi/transmission-ts/commit/bfe36d93e9474938a04938776e7b7721f5e22faf))
+
 ### 0.0.1 (2023-07-02)
 
 
