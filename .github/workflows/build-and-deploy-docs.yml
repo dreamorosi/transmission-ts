@@ -1,0 +1,39 @@
+name: Deploy docs to Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout
+      uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab  # v3.5.2
+    - name: Setup Pages
+      uses: actions/configure-pages@f156874f8191504dae5b037505266ed5dda6c382 # v3.0.6
+    - name: Setup Node and dependencies
+        uses: ./.github/actions/cached-node-modules
+    - name: Build docs
+      run: npm run docs-generateApiDoc
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@64bcae551a7b18bcb9a09042ddf1960979799187 # v1.0.8
+      with:
+        # Upload only the site path
+        path: './api'
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@ee48c7b82e077d7b8ef30b50a719e6a792a50c9a # v2.0.2
