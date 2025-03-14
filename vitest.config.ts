@@ -17,6 +17,7 @@ export default defineConfig({
 			},
 			exclude: [
 				...coverageConfigDefaults.exclude,
+				'./api/**/*',
 				'./src/types/*',
 				'./src/index.ts',
 			],
