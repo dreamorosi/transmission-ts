@@ -3,7 +3,7 @@ description: 'A simple action that sets up Node and npm from cache if possible, 
 inputs:
   nodeVersion:
     description: 'Node.js version to use'
-    default: '18'
+    default: '22'
   skipBuild:
     description: 'Whether to skip the build step or not'
     default: 'false'
@@ -19,10 +19,6 @@ runs:
       with:
         node-version: ${{ inputs.nodeVersion }}
         cache: 'npm'
-    - name: Install npm
-      if: ${{ inputs.nodeVersion != '18' }}
-      shell: bash
-      run: npm i -g npm@next-9
     - name: Cache node modules
       id: cache-node-modules
       uses: actions/cache@69d9d449aced6a2ede0bc19182fadc3a0a42d2b0 # v3.2.6

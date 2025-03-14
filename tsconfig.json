@@ -1,32 +1,24 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "experimentalDecorators": true,
-    "noImplicitAny": true,
-    "target": "ES2022",
-    "module": "commonjs",
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "lib",
-    "removeComments": false,
-    "strict": true,
-    "inlineSourceMap": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "pretty": true,
-    "baseUrl": "src/",
-    "rootDirs": [ "src/" ],
-    "esModuleInterop": true
-  },
-  "include": [ "src/**/*", "tests/**/*" ],
-  "exclude": [ "./node_modules"],
-  "watchOptions": {
-    "watchFile": "useFsEvents",
-    "watchDirectory": "useFsEvents",
-    "fallbackPolling": "dynamicPriority"
-  },
-  "lib": [ "ES2022" ],
-  "types": [
-    "node"
-  ]
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"compilerOptions": {
+		"noImplicitAny": true,
+		"target": "ES2022",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"declaration": true,
+		"declarationMap": true,
+		"outDir": "lib",
+		"removeComments": false,
+		"strict": true,
+		"inlineSourceMap": true,
+		"resolveJsonModule": true,
+		"pretty": true,
+		"baseUrl": "src/",
+		"rootDirs": ["src/"],
+		"esModuleInterop": true
+	},
+	"include": ["src/**/*", "tests/**/*"],
+	"exclude": ["./node_modules"],
+	"lib": ["ES2022"],
+	"types": ["node"]
 }

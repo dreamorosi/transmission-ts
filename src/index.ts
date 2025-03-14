@@ -1,1 +1,1 @@
-export * from './TransmissionClient';
+export { TransmissionClient } from './TransmissionClient.js';
