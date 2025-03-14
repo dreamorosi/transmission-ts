@@ -2,6 +2,12 @@ name: Run lint and unit tests
 
 on:
   workflow_call:
+    inputs:
+      skipBuild:
+        description: 'Whether to skip the build step or not'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   run-linting-and-unit-tests:
@@ -10,9 +16,12 @@ jobs:
       NODE_ENV: dev
     steps:
       - name: Checkout code
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Setup Node and dependencies
         uses: ./.github/actions/cached-node
+        with:
+          nodeVersion: 22
+          skipBuild: ${{ inputs.skipBuild }}
       - name: Run linting
         run: npm run lint
       - name: Run unit tests

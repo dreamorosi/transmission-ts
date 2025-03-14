@@ -3,7 +3,7 @@ description: 'A simple action that sets up Node and npm from cache if possible, 
 inputs:
   nodeVersion:
     description: 'Node.js version to use'
-    default: '18'
+    default: '22'
   skipBuild:
     description: 'Whether to skip the build step or not'
     default: 'false'
@@ -14,30 +14,27 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup NodeJS
-      uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3.6.0
-      with:
-        node-version: ${{ inputs.nodeVersion }}
-        cache: 'npm'
-    - name: Install npm
-      if: ${{ inputs.nodeVersion != '18' }}
-      shell: bash
-      run: npm i -g npm@next-9
     - name: Cache node modules
       id: cache-node-modules
-      uses: actions/cache@69d9d449aced6a2ede0bc19182fadc3a0a42d2b0 # v3.2.6
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
       with:
         path: '**/node_modules'
         # Use the combo between node version, name, and SHA-256 hash of the lock file as cache key so that
         # if one of them changes the cache is invalidated/discarded
-        key: ${{ inputs.nodeVersion }}-cache-utilities-node-modules-${{ hashFiles('./package-lock.json') }}
+        key: ${{ inputs.nodeVersion }}-${{ inputs.cacheKey }}-${{ hashFiles('./package-lock.json') }}
     - name: Install dependencies
       # We can skip the installation if there was a cache hit
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
       shell: bash
     - name: Build packages
-      if: ${{ inputs.skipBuild == 'false' }}
-      # Regardless of whether the cache was hit or not, we need to build the packages.
-      run: npm run build
+      # By default we build the packages, but we can skip this step if the caller wants to
+      if: inputs.build == 'true'
+      # We check if the build script exists in the package.json file, if it does we run it
+      run: |
+        if [[ $(jq -r '.scripts.build' package.json) != "null" ]]; then
+          npm run build
+        else
+          echo "No build script found in package.json"
+        fi
       shell: bash

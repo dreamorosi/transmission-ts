@@ -1,12 +1,12 @@
-import { vi } from 'vitest';
 import type { MockInterceptor } from 'undici/types/mock-interceptor';
+import { vi } from 'vitest';
+import { RequestService } from '../../src/RequestService.js';
+import { SessionService } from '../../src/SessionService.js';
 import type {
-  PingResponse,
-  RequestServiceConfig,
-  SessionServiceConfig,
-} from '../../src/types';
-import { SessionService } from '../../src/SessionService';
-import { RequestService } from '../../src/RequestService';
+	PingResponse,
+	RequestServiceConfig,
+	SessionServiceConfig,
+} from '../../src/types/index.js';
 
 /**
  * Get the base auth header
@@ -23,10 +23,10 @@ import { RequestService } from '../../src/RequestService';
  * @returns The auth header
  */
 const getBaseAuthHeader = (
-  user: string = 'transmission',
-  pass: string = 'transmission'
+	user = 'transmission',
+	pass = 'transmission'
 ): { Authorization: string } => ({
-  Authorization: `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`,
+	Authorization: `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`,
 });
 
 /**
@@ -43,22 +43,22 @@ const getBaseAuthHeader = (
  * @returns The session header
  */
 const getBaseSessionHeader = (
-  sessionId: string = '123'
+	sessionId = '123'
 ): { 'X-Transmission-Session-Id': string } => ({
-  'X-Transmission-Session-Id': sessionId,
+	'X-Transmission-Session-Id': sessionId,
 });
 
 interface GetRequestMatcherOptions extends Partial<MockInterceptor.Options> {
-  /**
-   * Whether to add the default auth header
-   * @default true
-   */
-  addAuthHeader?: boolean;
-  /**
-   * Whether to add the default session header
-   * @default true
-   */
-  addSessionHeader?: boolean;
+	/**
+	 * Whether to add the default auth header
+	 * @default true
+	 */
+	addAuthHeader?: boolean;
+	/**
+	 * Whether to add the default session header
+	 * @default true
+	 */
+	addSessionHeader?: boolean;
 }
 
 /**
@@ -80,23 +80,23 @@ interface GetRequestMatcherOptions extends Partial<MockInterceptor.Options> {
  * @returns The options to pass to the `intercept` method of the mock interceptor
  */
 const getRequestMatcher = (
-  options: GetRequestMatcherOptions = {}
+	options: GetRequestMatcherOptions = {}
 ): MockInterceptor.Options => {
-  const { addAuthHeader, addSessionHeader, headers, ...rest } = options;
-  const requestMatcher = {
-    path: '/transmission/rpc',
-    method: 'POST',
-    ...rest,
-  };
+	const { addAuthHeader, addSessionHeader, headers, ...rest } = options;
+	const requestMatcher = {
+		path: '/transmission/rpc',
+		method: 'POST',
+		...rest,
+	};
 
-  return {
-    ...requestMatcher,
-    headers: {
-      ...headers,
-      ...(addAuthHeader === false ? {} : getBaseAuthHeader()),
-      ...(addSessionHeader === false ? {} : getBaseSessionHeader()),
-    },
-  };
+	return {
+		...requestMatcher,
+		headers: {
+			...headers,
+			...(addAuthHeader === false ? {} : getBaseAuthHeader()),
+			...(addSessionHeader === false ? {} : getBaseSessionHeader()),
+		},
+	};
 };
 
 /**
@@ -113,16 +113,16 @@ const getRequestMatcher = (
  * @returns The ping response
  */
 const getPingResponse = (): PingResponse => ({
-  arguments: {},
-  result: 'no method name',
+	arguments: {},
+	result: 'no method name',
 });
 
 /**
  * Class to mock the session service
  */
 class SessionDummy extends SessionService {
-  public getSessionId = vi.fn().mockResolvedValue('123');
-  public resetSessionId = vi.fn();
+	public getSessionId = vi.fn().mockResolvedValue('123');
+	public resetSessionId = vi.fn();
 }
 
 /**
@@ -130,12 +130,12 @@ class SessionDummy extends SessionService {
  * @returns A dummy session service
  */
 const getDummySessionService = (config?: SessionServiceConfig): SessionDummy =>
-  new SessionDummy(
-    config || {
-      pathname: '',
-      authorization: '',
-    }
-  );
+	new SessionDummy(
+		config || {
+			pathname: '',
+			authorization: '',
+		}
+	);
 
 /**
  * Get a dummy request service, optionally by passing a session service
@@ -143,20 +143,20 @@ const getDummySessionService = (config?: SessionServiceConfig): SessionDummy =>
  * @returns A dummy request service
  */
 const getDummyRequestService = (
-  sessionService?: SessionDummy | null,
-  invalidSessionRetryConfig?: RequestServiceConfig['invalidSessionRetryConfig']
+	sessionService?: SessionDummy | null,
+	invalidSessionRetryConfig?: RequestServiceConfig['invalidSessionRetryConfig']
 ): RequestService =>
-  new RequestService({
-    customServices: {
-      sessionService: sessionService || getDummySessionService(),
-    },
-    invalidSessionRetryConfig,
-  });
+	new RequestService({
+		customServices: {
+			sessionService: sessionService || getDummySessionService(),
+		},
+		invalidSessionRetryConfig,
+	});
 
 export {
-  getBaseAuthHeader,
-  getRequestMatcher,
-  getPingResponse,
-  getDummySessionService,
-  getDummyRequestService,
+	getBaseAuthHeader,
+	getRequestMatcher,
+	getPingResponse,
+	getDummySessionService,
+	getDummyRequestService,
 };
