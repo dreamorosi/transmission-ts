@@ -1,4 +1,4 @@
-import type { MockInterceptor } from 'undici/types/mock-interceptor';
+import type { MockInterceptor } from 'undici/types/mock-interceptor.js';
 import { vi } from 'vitest';
 import { RequestService } from '../../src/RequestService.js';
 import { SessionService } from '../../src/SessionService.js';
