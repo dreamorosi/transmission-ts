@@ -117,6 +117,7 @@ const torrentListWithFields = {
 		torrents: [
 			{
 				id: 19,
+				hashString: '803f75f2673f18365b2123fecaeca5ed70cb11ffa',
 				name: 'Some Dummy Torrent',
 			},
 		],
@@ -130,6 +131,7 @@ const recentlyActiveTorrentList = {
 		torrents: [
 			{
 				id: 19,
+				hashString: '803f75f2673f18365b2123fecaeca5ed70cb11ffa',
 				name: 'Some Dummy Torrent',
 			},
 		],

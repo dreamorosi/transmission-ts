@@ -184,10 +184,10 @@ class TransmissionClient implements ITransmissionClient {
 	 * @example
 	 * ```ts
 	 * // List all torrents currently in Transmission
-	 * const torrents = await client.getTorrents();
+	 * const torrents = await client.listTorrents();
 	 * // List torrents with ids 1 and 2
-	 * const torrents = await client.getTorrents({
-	 *   ids: [1, 2],
+	 * const torrents = await client.listTorrents({
+	 *   ids: ['abc', 'def'],
 	 * });
 	 * ```
 	 *
@@ -302,17 +302,17 @@ class TransmissionClient implements ITransmissionClient {
 	/**
 	 * Starts one or more torrents on the Transmission RPC endpoint
 	 *
-	 * You can start torrents by addressing them by their id:
+	 * You can start torrents by addressing them by their hash string:
 	 *
 	 * @example
 	 * ```ts
-	 * // Start torrent with id 1
+	 * // Start torrent with hash string 'abc1234567890def1234567890abcdef12345678'
 	 * await client.startTorrents({
-	 *   ids: 1,
+	 *   ids: 'abc1234567890def1234567890abcdef12345678',
 	 * });
-	 * // Start torrents with ids 1 and 2
+	 * // Start torrents with hashes 'abc1234567890def1234567890abcdef12345678' and 'def1234567890abc1234567890abcdef12345678'
 	 * await client.startTorrents({
-	 *   ids: [1, 2],
+	 *   ids: ['abc1234567890def1234567890abcdef12345678', 'def1234567890abc1234567890abcdef12345678'],
 	 * });
 	 * ```
 	 *

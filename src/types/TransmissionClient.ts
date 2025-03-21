@@ -85,12 +85,16 @@ type InvalidSessionRetry = {
 /**
  * The configuration options for addressing torrents
  */
-type TorrentId = number | number[];
+type TorrentId = string | string[];
 
 /**
  * The configuration options for listing torrents
  */
 type ListTorrentsConfig = {
+	/**
+	 * The hash string or hash strings of the torrents to list
+	 * @example '1234567890abcdef1234567890abcdef12345678'
+	 */
 	ids?: TorrentId;
 	fields?: (keyof typeof TorrentField)[];
 };
@@ -134,6 +138,12 @@ type AddMagnetOptions = {
 	 * @default false
 	 */
 	paused?: boolean;
+	/**
+	 * The labels to apply to the torrent
+	 * @example ['label1', 'label2']
+	 * @default []
+	 */
+	labels?: string[];
 };
 
 /**
@@ -146,8 +156,7 @@ type AddMagnetOptions = {
 type RemoveTorrentsConfig = {
 	/**
 	 * The ID or IDs of the torrents to remove
-	 * @example 1
-	 * @example
+	 * @example 'abc1234567890abcdef1234567890abcdef12345678'
 	 */
 	ids: TorrentId;
 	/**
@@ -167,9 +176,8 @@ type RemoveTorrentsConfig = {
  */
 type StartTorrentsConfig = {
 	/**
-	 * The ID or IDs of the torrents to remove
-	 * @example 1
-	 * @example
+	 * The ID or IDs of the torrents to start
+	 * @example 'abc1234567890abcdef1234567890abcdef12345678'
 	 */
 	ids?: TorrentId;
 	/**
@@ -187,9 +195,8 @@ type StartTorrentsConfig = {
  */
 type StopTorrentsConfig = {
 	/**
-	 * The ID or IDs of the torrents to remove
-	 * @example 1
-	 * @example
+	 * The ID or IDs of the torrents to stop
+	 * @example 'abc1234567890abcdef1234567890abcdef12345678'
 	 */
 	ids: TorrentId;
 };

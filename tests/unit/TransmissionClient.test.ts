@@ -18,6 +18,16 @@ afterEach(async () => {
 });
 
 describe('Class: TransmissionClient', () => {
+	/* it('test', async () => {
+		const transmissionClient = new TransmissionClient({
+			username: 'andre',
+			password: 'Paccoccap1!',
+		});
+		// await expect(transmissionClient.ping()).resolves.toEqual(undefined);
+
+		const res = await transmissionClient.listTorrents({ fields: ['name'] });
+		expect(res.length).toBe(1);
+	}); */
 	describe('Method: ping', () => {
 		it('returns successfully if the remote returns the expected response', async () => {
 			// Prepare
@@ -239,7 +249,7 @@ describe('Class: TransmissionClient', () => {
 
 			// Act
 			const res = await transmissionClient.listTorrents({
-				ids: [1, 2],
+				ids: ['a', 'b'],
 			});
 
 			// Assert
@@ -253,7 +263,7 @@ describe('Class: TransmissionClient', () => {
 				JSON.stringify({
 					method: 'torrent-get',
 					arguments: {
-						ids: [1, 2],
+						ids: ['a', 'b'],
 						fields: AllTorrentFields,
 					},
 				})
@@ -273,7 +283,7 @@ describe('Class: TransmissionClient', () => {
 
 			// Act
 			const res = await transmissionClient.listTorrents({
-				ids: 1,
+				ids: 'a',
 			});
 
 			// Assert
@@ -282,7 +292,7 @@ describe('Class: TransmissionClient', () => {
 				JSON.stringify({
 					method: 'torrent-get',
 					arguments: {
-						ids: [1],
+						ids: ['a'],
 						fields: AllTorrentFields,
 					},
 				})
@@ -399,14 +409,14 @@ describe('Class: TransmissionClient', () => {
 			});
 
 			// Act
-			await transmissionClient.removeTorrents({ ids: 1 });
+			await transmissionClient.removeTorrents({ ids: 'a' });
 
 			// Assess
 			expect(requestService.request).toHaveBeenCalledWith(
 				JSON.stringify({
 					method: 'torrent-remove',
 					arguments: {
-						ids: [1],
+						ids: ['a'],
 						'delete-local-data': false,
 					},
 				})
@@ -423,14 +433,14 @@ describe('Class: TransmissionClient', () => {
 			});
 
 			// Act
-			await transmissionClient.removeTorrents({ ids: [1, 2] });
+			await transmissionClient.removeTorrents({ ids: ['a', 'b'] });
 
 			// Assess
 			expect(requestService.request).toHaveBeenCalledWith(
 				JSON.stringify({
 					method: 'torrent-remove',
 					arguments: {
-						ids: [1, 2],
+						ids: ['a', 'b'],
 						'delete-local-data': false,
 					},
 				})
@@ -453,7 +463,7 @@ describe('Class: TransmissionClient', () => {
 			// Act & Assess
 			await expect(() =>
 				transmissionClient.removeTorrents({
-					ids: 1,
+					ids: 'a',
 					deleteLocalData: true,
 				})
 			).rejects.toThrowError(
@@ -463,7 +473,7 @@ describe('Class: TransmissionClient', () => {
 				JSON.stringify({
 					method: 'torrent-remove',
 					arguments: {
-						ids: [1],
+						ids: ['a'],
 						'delete-local-data': true,
 					},
 				})
@@ -504,7 +514,7 @@ describe('Class: TransmissionClient', () => {
 
 			// Act
 			await transmissionClient.startTorrents({
-				ids: [1, 2],
+				ids: ['a', 'b'],
 			});
 
 			// Assert
@@ -512,7 +522,7 @@ describe('Class: TransmissionClient', () => {
 				JSON.stringify({
 					method: 'torrent-start',
 					arguments: {
-						ids: [1, 2],
+						ids: ['a', 'b'],
 					},
 				})
 			);
@@ -529,7 +539,7 @@ describe('Class: TransmissionClient', () => {
 
 			// Act
 			await transmissionClient.startTorrents({
-				ids: 1,
+				ids: 'a',
 				now: true,
 			});
 
@@ -538,7 +548,7 @@ describe('Class: TransmissionClient', () => {
 				JSON.stringify({
 					method: 'torrent-start-now',
 					arguments: {
-						ids: [1],
+						ids: ['a'],
 					},
 				})
 			);
@@ -598,7 +608,7 @@ describe('Class: TransmissionClient', () => {
 
 			// Act
 			await transmissionClient.stopTorrents({
-				ids: 1,
+				ids: 'a',
 			});
 
 			// Assert
@@ -606,7 +616,7 @@ describe('Class: TransmissionClient', () => {
 				JSON.stringify({
 					method: 'torrent-stop',
 					arguments: {
-						ids: [1],
+						ids: ['a'],
 					},
 				})
 			);
@@ -623,7 +633,7 @@ describe('Class: TransmissionClient', () => {
 
 			// Act
 			await transmissionClient.stopTorrents({
-				ids: [1, 2],
+				ids: ['a', 'b'],
 			});
 
 			// Assert
@@ -631,7 +641,7 @@ describe('Class: TransmissionClient', () => {
 				JSON.stringify({
 					method: 'torrent-stop',
 					arguments: {
-						ids: [1, 2],
+						ids: ['a', 'b'],
 					},
 				})
 			);
