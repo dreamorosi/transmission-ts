@@ -32,7 +32,7 @@
 	"homepage": "https://github.com/dreamorosi/transmission-ts#readme",
 	"license": "MIT-0",
 	"engines": {
-		"node": ">=18"
+		"node": ">=20"
 	},
 	"files": [
 		"lib"

@@ -22,6 +22,5 @@ export default defineConfig({
 				'./src/index.ts',
 			],
 		},
-		setupFiles: './tests/helpers/customMatchers.ts',
 	},
 });

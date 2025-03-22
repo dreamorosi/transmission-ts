@@ -54,11 +54,11 @@ const Torrent = z.object({
 			})
 		)
 		.optional(),
-	hashString: z.string().optional(),
+	hashString: z.string(),
 	haveUnchecked: z.number().optional(),
 	haveValid: z.number().optional(),
 	honorsSessionLimits: z.boolean().optional(),
-	id: z.number(),
+	id: z.number().optional(),
 	isFinished: z.boolean().optional(),
 	isPrivate: z.boolean().optional(),
 	isStalled: z.boolean().optional(),
