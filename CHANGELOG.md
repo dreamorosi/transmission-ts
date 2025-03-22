@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 
+### 0.0.6 (2025-03-22)
+
 ### 0.0.5 (2025-03-22)
 
 ### 0.0.4 (2025-03-14)
