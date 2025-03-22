@@ -6,6 +6,8 @@ on:
 concurrency:
   group: on-release-publish
 
+permissions: {}
+
 jobs:
   publish-npm:
     environment: npm
@@ -24,6 +26,8 @@ jobs:
           npm set "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}"
       - name: Setup Node and dependencies
         uses: ./.github/actions/cached-node
+        with:
+          build: true
       - name: Bump version
         run: npx standard-version
       - name: Push changelog and tags

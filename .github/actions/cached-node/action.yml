@@ -4,8 +4,8 @@ inputs:
   nodeVersion:
     description: 'Node.js version to use'
     default: '22'
-  skipBuild:
-    description: 'Whether to skip the build step or not'
+  build:
+    description: 'Whether to run the build step or not'
     default: 'false'
 outputs:
   cache-hit:
