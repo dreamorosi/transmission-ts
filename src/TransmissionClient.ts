@@ -195,7 +195,7 @@ class TransmissionClient implements ITransmissionClient {
 	 *
 	 * @example
 	 * ```ts
-	 * const torrents = await client.getTorrents({
+	 * const torrents = await client.listTorrents({
 	 *   fields: ['id', 'name', 'status'],
 	 * });
 	 * ```

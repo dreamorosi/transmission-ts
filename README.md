@@ -46,9 +46,9 @@ You can get all torrents or only some of them by specifying a list of ids:
 
 ```ts
 // List all torrents currently in Transmission
-const torrents = await client.getTorrents();
+const torrents = await client.listTorrents();
 // List torrents with ids 1 and 2
-const torrents = await client.getTorrents({
+const torrents = await client.listTorrents({
   ids: [1, 2],
 });
 ```
@@ -56,7 +56,7 @@ const torrents = await client.getTorrents({
 When getting torrents you can also select which fields you want to receive by passing in a list of fields:
 
 ```ts
-const torrents = await client.getTorrents({
+const torrents = await client.listTorrents({
   fields: ["id", "name", "status"],
 });
 ```
